@@ -1,6 +1,48 @@
 from django.contrib import admin
+from django import forms
 
-from .models import Account, Transaction
+from .models import Account, Transaction, BankAdmin
+
+
+# =========================================================
+# ACCOUNT FORM
+# =========================================================
+
+class AccountAdminForm(forms.ModelForm):
+
+    pin = forms.CharField(
+        label='PIN',
+        widget=forms.PasswordInput(
+            render_value=False
+        ),
+        max_length=20,
+        required=True
+    )
+
+    class Meta:
+        model = Account
+        fields = (
+            'account_number',
+            'full_name',
+            'pin',
+            'balance',
+        )
+
+    def save(self, commit=True):
+
+        account = super().save(
+            commit=False
+        )
+
+        raw_pin = self.cleaned_data['pin']
+
+        # Hash the PIN before saving
+        account.set_pin(raw_pin)
+
+        if commit:
+            account.save()
+
+        return account
 
 
 # =========================================================
@@ -9,6 +51,8 @@ from .models import Account, Transaction
 
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):
+
+    form = AccountAdminForm
 
     list_display = (
         'account_number',
@@ -59,4 +103,22 @@ class TransactionAdmin(admin.ModelAdmin):
 
     readonly_fields = (
         'created_at',
+    )
+
+
+# =========================================================
+# BANK ADMIN
+# =========================================================
+
+@admin.register(BankAdmin)
+class BankAdminAdmin(admin.ModelAdmin):
+
+    list_display = (
+        'username',
+        'full_name',
+    )
+
+    search_fields = (
+        'username',
+        'full_name',
     )
