@@ -2,13 +2,32 @@
 
 set -o errexit
 
-echo "Running migrations..."
+echo "========================================"
+echo " ATM SYSTEM - RENDER BUILD"
+echo "========================================"
+
+echo "Installing Python dependencies..."
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+
+echo "========================================"
+echo "Running database migrations..."
+echo "========================================"
+
 python manage.py migrate --noinput
 
-echo "Resetting admin password..."
-python manage.py reset_admin --password="AdminATM@2026"
-
+echo "========================================"
 echo "Collecting static files..."
+echo "========================================"
+
 python manage.py collectstatic --noinput
 
-echo "Build completed successfully."
+echo "========================================"
+echo "Creating / updating ATM admin..."
+echo "========================================"
+
+python manage.py create_atm_admin || true
+
+echo "========================================"
+echo "BUILD COMPLETED SUCCESSFULLY"
+echo "========================================"
