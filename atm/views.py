@@ -41,14 +41,21 @@ def login_view(request):
 
         try:
 
+            # Search using account number only.
+            # PIN is hashed, so we must NOT compare it
+            # directly with the database value.
             account = Account.objects.get(
-                account_number=account_number,
-                pin=pin
+                account_number=account_number
             )
 
-            request.session['account_id'] = account.id
+            # Correct way to verify hashed PIN
+            if account.check_pin(pin):
 
-            return redirect('dashboard')
+                request.session['account_id'] = account.id
+
+                return redirect('dashboard')
+
+            error = 'Invalid account number or PIN.'
 
         except Account.DoesNotExist:
 
