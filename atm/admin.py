@@ -1,48 +1,6 @@
 from django.contrib import admin
-from django import forms
 
 from .models import Account, Transaction, BankAdmin
-
-
-# =========================================================
-# ACCOUNT FORM
-# =========================================================
-
-class AccountAdminForm(forms.ModelForm):
-
-    pin = forms.CharField(
-        label='PIN',
-        widget=forms.PasswordInput(
-            render_value=False
-        ),
-        max_length=20,
-        required=True
-    )
-
-    class Meta:
-        model = Account
-        fields = (
-            'account_number',
-            'full_name',
-            'pin',
-            'balance',
-        )
-
-    def save(self, commit=True):
-
-        account = super().save(
-            commit=False
-        )
-
-        raw_pin = self.cleaned_data['pin']
-
-        # Hash the PIN before saving
-        account.set_pin(raw_pin)
-
-        if commit:
-            account.save()
-
-        return account
 
 
 # =========================================================
@@ -52,27 +10,94 @@ class AccountAdminForm(forms.ModelForm):
 @admin.register(Account)
 class AccountAdmin(admin.ModelAdmin):
 
-    form = AccountAdminForm
-
     list_display = (
-        'account_number',
-        'full_name',
-        'balance',
-        'created_at',
+        "account_number",
+        "full_name",
+        "balance",
+        "created_at",
     )
 
     search_fields = (
-        'account_number',
-        'full_name',
+        "account_number",
+        "full_name",
     )
 
     list_filter = (
-        'created_at',
+        "created_at",
     )
 
     readonly_fields = (
-        'created_at',
+        "created_at",
     )
+
+    fieldsets = (
+        (
+            "Customer Information",
+            {
+                "fields": (
+                    "account_number",
+                    "full_name",
+                )
+            },
+        ),
+
+        (
+            "Security",
+            {
+                "fields": (
+                    "pin",
+                )
+            },
+        ),
+
+        (
+            "Account Balance",
+            {
+                "fields": (
+                    "balance",
+                )
+            },
+        ),
+
+        (
+            "System Information",
+            {
+                "fields": (
+                    "created_at",
+                )
+            },
+        ),
+    )
+
+    def save_model(self, request, obj, form, change):
+
+        # Kama account ni mpya
+        if not change:
+
+            raw_pin = obj.pin
+
+            if raw_pin:
+                obj.set_pin(raw_pin)
+
+        # Kama account iliyopo imebadilishwa
+        else:
+
+            old_account = Account.objects.get(
+                pk=obj.pk
+            )
+
+            # Kama PIN imebadilishwa,
+            # hash PIN mpya
+            if obj.pin != old_account.pin:
+
+                obj.set_pin(obj.pin)
+
+        super().save_model(
+            request,
+            obj,
+            form,
+            change
+        )
 
 
 # =========================================================
@@ -83,26 +108,26 @@ class AccountAdmin(admin.ModelAdmin):
 class TransactionAdmin(admin.ModelAdmin):
 
     list_display = (
-        'account',
-        'transaction_type',
-        'amount',
-        'description',
-        'created_at',
+        "account",
+        "transaction_type",
+        "amount",
+        "description",
+        "created_at",
     )
 
     search_fields = (
-        'account__account_number',
-        'account__full_name',
-        'description',
+        "account__account_number",
+        "account__full_name",
+        "description",
     )
 
     list_filter = (
-        'transaction_type',
-        'created_at',
+        "transaction_type",
+        "created_at",
     )
 
     readonly_fields = (
-        'created_at',
+        "created_at",
     )
 
 
@@ -114,11 +139,60 @@ class TransactionAdmin(admin.ModelAdmin):
 class BankAdminAdmin(admin.ModelAdmin):
 
     list_display = (
-        'username',
-        'full_name',
+        "username",
+        "full_name",
     )
 
     search_fields = (
-        'username',
-        'full_name',
+        "username",
+        "full_name",
     )
+
+    fieldsets = (
+        (
+            "Administrator Information",
+            {
+                "fields": (
+                    "username",
+                    "full_name",
+                )
+            },
+        ),
+
+        (
+            "Security",
+            {
+                "fields": (
+                    "password",
+                )
+            },
+        ),
+    )
+
+    def save_model(self, request, obj, form, change):
+
+        if not change:
+
+            raw_password = obj.password
+
+            if raw_password:
+                obj.set_password(raw_password)
+
+        else:
+
+            old_admin = BankAdmin.objects.get(
+                pk=obj.pk
+            )
+
+            if obj.password != old_admin.password:
+
+                obj.set_password(
+                    obj.password
+                )
+
+        super().save_model(
+            request,
+            obj,
+            form,
+            change
+        )

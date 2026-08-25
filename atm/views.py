@@ -10,10 +10,7 @@ from .models import Account, Transaction
 # =========================================================
 
 def home(request):
-    return render(
-        request,
-        'atm/home.html'
-    )
+    return render(request, "atm/home.html")
 
 
 # =========================================================
@@ -22,61 +19,60 @@ def home(request):
 
 def login_view(request):
 
-    # Kama tayari ameingia
-    if request.session.get('account_id'):
-        return redirect('dashboard')
+    if request.session.get("account_id"):
+        return redirect("dashboard")
 
     error = None
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
         account_number = request.POST.get(
-            'account_number',
-            ''
+            "account_number",
+            ""
         ).strip()
 
         pin = request.POST.get(
-            'pin',
-            ''
+            "pin",
+            ""
         ).strip()
 
-        # Hakikisha fields hazijaachwa wazi
         if not account_number or not pin:
 
-            error = 'Please enter account number and PIN.'
+            error = "Please enter account number and PIN."
 
         else:
 
             try:
 
-                # Tafuta account kwa account number pekee
+                # Find account using account number
                 account = Account.objects.get(
                     account_number=account_number
                 )
 
-                # PIN imehifadhiwa kwa hash,
-                # kwa hiyo tunatumia check_pin()
+                # IMPORTANT:
+                # PIN in database is hashed.
+                # Therefore we must use check_pin().
                 if account.check_pin(pin):
 
-                    # Hifadhi account kwenye session
-                    request.session['account_id'] = account.id
+                    request.session["account_id"] = account.id
+
                     request.session.save()
 
-                    return redirect('dashboard')
+                    return redirect("dashboard")
 
                 else:
 
-                    error = 'Invalid account number or PIN.'
+                    error = "Invalid account number or PIN."
 
             except Account.DoesNotExist:
 
-                error = 'Invalid account number or PIN.'
+                error = "Invalid account number or PIN."
 
     return render(
         request,
-        'atm/login.html',
+        "atm/login.html",
         {
-            'error': error
+            "error": error
         }
     )
 
@@ -89,7 +85,31 @@ def logout_view(request):
 
     request.session.flush()
 
-    return redirect('login')
+    return redirect("login")
+
+
+# =========================================================
+# GET LOGGED-IN ACCOUNT
+# =========================================================
+
+def get_logged_account(request):
+
+    account_id = request.session.get("account_id")
+
+    if not account_id:
+        return None
+
+    try:
+
+        return Account.objects.get(
+            id=account_id
+        )
+
+    except Account.DoesNotExist:
+
+        request.session.flush()
+
+        return None
 
 
 # =========================================================
@@ -98,30 +118,16 @@ def logout_view(request):
 
 def dashboard(request):
 
-    account_id = request.session.get(
-        'account_id'
-    )
+    account = get_logged_account(request)
 
-    if not account_id:
-        return redirect('login')
-
-    try:
-
-        account = Account.objects.get(
-            id=account_id
-        )
-
-    except Account.DoesNotExist:
-
-        request.session.flush()
-
-        return redirect('login')
+    if not account:
+        return redirect("login")
 
     return render(
         request,
-        'atm/dashboard.html',
+        "atm/dashboard.html",
         {
-            'account': account
+            "account": account
         }
     )
 
@@ -132,71 +138,51 @@ def dashboard(request):
 
 def withdraw(request):
 
-    account_id = request.session.get(
-        'account_id'
-    )
+    account = get_logged_account(request)
 
-    if not account_id:
-        return redirect('login')
-
-    try:
-
-        account = Account.objects.get(
-            id=account_id
-        )
-
-    except Account.DoesNotExist:
-
-        request.session.flush()
-
-        return redirect('login')
+    if not account:
+        return redirect("login")
 
     error = None
     success = None
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
         amount_text = request.POST.get(
-            'amount',
-            ''
+            "amount",
+            ""
         ).strip()
 
         try:
 
-            amount = Decimal(
-                amount_text
-            )
+            amount = Decimal(amount_text)
 
             if amount <= 0:
 
-                error = (
-                    'Please enter a valid amount.'
-                )
+                error = "Please enter a valid amount."
 
             elif amount > account.balance:
 
-                error = (
-                    'Insufficient balance.'
-                )
+                error = "Insufficient balance."
 
             else:
 
                 account.balance -= amount
 
                 account.save(
-                    update_fields=['balance']
+                    update_fields=["balance"]
                 )
 
                 Transaction.objects.create(
                     account=account,
-                    transaction_type='WITHDRAW',
+                    transaction_type="WITHDRAW",
                     amount=amount,
-                    description='Cash withdrawal'
+                    description="Cash withdrawal"
                 )
 
                 success = (
-                    f'Withdrawal of TSh '
-                    f'{amount:,.2f} was successful.'
+                    f"Withdrawal of TSh "
+                    f"{amount:,.2f} was successful."
                 )
 
         except (
@@ -205,17 +191,15 @@ def withdraw(request):
             TypeError
         ):
 
-            error = (
-                'Please enter a valid amount.'
-            )
+            error = "Please enter a valid amount."
 
     return render(
         request,
-        'atm/withdraw.html',
+        "atm/withdraw.html",
         {
-            'account': account,
-            'error': error,
-            'success': success
+            "account": account,
+            "error": error,
+            "success": success
         }
     )
 
@@ -226,65 +210,47 @@ def withdraw(request):
 
 def deposit(request):
 
-    account_id = request.session.get(
-        'account_id'
-    )
+    account = get_logged_account(request)
 
-    if not account_id:
-        return redirect('login')
-
-    try:
-
-        account = Account.objects.get(
-            id=account_id
-        )
-
-    except Account.DoesNotExist:
-
-        request.session.flush()
-
-        return redirect('login')
+    if not account:
+        return redirect("login")
 
     error = None
     success = None
 
-    if request.method == 'POST':
+    if request.method == "POST":
 
         amount_text = request.POST.get(
-            'amount',
-            ''
+            "amount",
+            ""
         ).strip()
 
         try:
 
-            amount = Decimal(
-                amount_text
-            )
+            amount = Decimal(amount_text)
 
             if amount <= 0:
 
-                error = (
-                    'Please enter a valid amount.'
-                )
+                error = "Please enter a valid amount."
 
             else:
 
                 account.balance += amount
 
                 account.save(
-                    update_fields=['balance']
+                    update_fields=["balance"]
                 )
 
                 Transaction.objects.create(
                     account=account,
-                    transaction_type='DEPOSIT',
+                    transaction_type="DEPOSIT",
                     amount=amount,
-                    description='Cash deposit'
+                    description="Cash deposit"
                 )
 
                 success = (
-                    f'Deposit of TSh '
-                    f'{amount:,.2f} was successful.'
+                    f"Deposit of TSh "
+                    f"{amount:,.2f} was successful."
                 )
 
         except (
@@ -293,17 +259,15 @@ def deposit(request):
             TypeError
         ):
 
-            error = (
-                'Please enter a valid amount.'
-            )
+            error = "Please enter a valid amount."
 
     return render(
         request,
-        'atm/deposit.html',
+        "atm/deposit.html",
         {
-            'account': account,
-            'error': error,
-            'success': success
+            "account": account,
+            "error": error,
+            "success": success
         }
     )
 
@@ -314,37 +278,23 @@ def deposit(request):
 
 def transactions(request):
 
-    account_id = request.session.get(
-        'account_id'
-    )
+    account = get_logged_account(request)
 
-    if not account_id:
-        return redirect('login')
-
-    try:
-
-        account = Account.objects.get(
-            id=account_id
-        )
-
-    except Account.DoesNotExist:
-
-        request.session.flush()
-
-        return redirect('login')
+    if not account:
+        return redirect("login")
 
     transaction_list = (
         Transaction.objects
         .filter(account=account)
-        .order_by('-created_at')
+        .order_by("-created_at")
     )
 
     return render(
         request,
-        'atm/transactions.html',
+        "atm/transactions.html",
         {
-            'account': account,
-            'transactions': transaction_list
+            "account": account,
+            "transactions": transaction_list
         }
     )
 
@@ -355,29 +305,15 @@ def transactions(request):
 
 def explore(request):
 
-    account_id = request.session.get(
-        'account_id'
-    )
+    account = get_logged_account(request)
 
-    if not account_id:
-        return redirect('login')
-
-    try:
-
-        account = Account.objects.get(
-            id=account_id
-        )
-
-    except Account.DoesNotExist:
-
-        request.session.flush()
-
-        return redirect('login')
+    if not account:
+        return redirect("login")
 
     return render(
         request,
-        'atm/explore.html',
+        "atm/explore.html",
         {
-            'account': account
+            "account": account
         }
     )
