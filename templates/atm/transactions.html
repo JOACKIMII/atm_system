@@ -1,187 +1,753 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>ATM Transactions</title>
 
-```
-<style>
-    * {
-        box-sizing: border-box;
-    }
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
 
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f4f7fb;
-    }
+        body {
+            background: #f4f7fb;
+            color: #172033;
+        }
 
-    .sidebar {
-        position: fixed;
-        width: 220px;
-        height: 100vh;
-        background: #071a3d;
-        padding: 25px 15px;
-    }
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
 
-    .logo {
-        color: white;
-        text-align: center;
-        font-size: 21px;
-        font-weight: bold;
-        margin-bottom: 35px;
-    }
+        /* SIDEBAR */
 
-    .logo small {
-        display: block;
-        color: #9db5dc;
-        margin-top: 5px;
-    }
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(180deg, #061b49, #0b2d6b);
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            padding: 25px 15px;
+            box-shadow: 5px 0 20px rgba(0,0,0,.12);
+        }
 
-    .menu {
-        display: block;
-        color: #dce7ff;
-        text-decoration: none;
-        padding: 13px;
-        border-radius: 8px;
-        margin-bottom: 8px;
-    }
+        .logo {
+            text-align: center;
+            margin-bottom: 35px;
+        }
 
-    .menu:hover,
-    .active {
-        background: #12448e;
-        color: white;
-    }
+        .logo-icon {
+            width: 55px;
+            height: 55px;
+            margin: auto;
+            border-radius: 15px;
+            background: white;
+            color: #0b2d6b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+        }
 
-    .main {
-        margin-left: 220px;
-        padding: 30px;
-    }
+        .logo h2 {
+            margin-top: 12px;
+            font-size: 18px;
+        }
 
-    .header,
-    .panel {
-        background: white;
-        border-radius: 12px;
-        padding: 20px;
-        margin-bottom: 20px;
-    }
+        .logo span {
+            font-size: 10px;
+            color: #a9c4f5;
+        }
 
-    h1 {
-        margin: 0;
-        color: #071a3d;
-    }
+        .menu-title {
+            color: #8da9d8;
+            font-size: 11px;
+            text-transform: uppercase;
+            margin: 20px 12px 10px;
+        }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
+        .menu a {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            color: #dce8ff;
+            text-decoration: none;
+            padding: 13px 14px;
+            margin: 5px 0;
+            border-radius: 10px;
+            transition: .2s;
+            font-size: 14px;
+        }
 
-    th {
-        background: #071a3d;
-        color: white;
-        padding: 13px;
-        text-align: left;
-    }
+        .menu a:hover {
+            background: rgba(255,255,255,.12);
+            color: white;
+        }
 
-    td {
-        padding: 13px;
-        border-bottom: 1px solid #eee;
-    }
+        .menu a.active {
+            background: #1976d2;
+            color: white;
+            box-shadow: 0 5px 15px rgba(25,118,210,.35);
+        }
 
-    .empty {
-        text-align: center;
-        padding: 30px;
-        color: #888;
-    }
-</style>
-```
+        .icon {
+            width: 25px;
+            text-align: center;
+            font-size: 17px;
+        }
 
+        /* MAIN */
+
+        .main {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 30px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+        }
+
+        .topbar h1 {
+            font-size: 28px;
+            color: #071d49;
+        }
+
+        .topbar p {
+            color: #718096;
+            margin-top: 5px;
+        }
+
+        .admin-box {
+            background: white;
+            padding: 10px 16px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.06);
+            color: #0b2d6b;
+            font-weight: bold;
+        }
+
+        /* STATISTICS */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.06);
+            border: 1px solid #e8edf5;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .stat-title {
+            color: #718096;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #071d49;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 13px;
+            background: #e8f1ff;
+            color: #1261b5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 21px;
+        }
+
+        /* TABLE CARD */
+
+        .content-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,.06);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 23px;
+            border-bottom: 1px solid #edf0f5;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h2 {
+            color: #071d49;
+            font-size: 19px;
+        }
+
+        .search {
+            padding: 10px 14px;
+            border: 1px solid #dce3ee;
+            border-radius: 9px;
+            outline: none;
+            width: 230px;
+        }
+
+        .search:focus {
+            border-color: #1976d2;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f7f9fc;
+            color: #667085;
+            text-align: left;
+            padding: 14px 20px;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        td {
+            padding: 16px 20px;
+            border-top: 1px solid #edf0f5;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #f8fbff;
+        }
+
+        .account {
+            color: #1261b5;
+            font-weight: bold;
+        }
+
+        .amount {
+            font-weight: bold;
+        }
+
+        .deposit {
+            color: #087443;
+        }
+
+        .withdraw {
+            color: #b42318;
+        }
+
+        .transfer {
+            color: #6941c6;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .badge-deposit {
+            background: #e4f8ef;
+            color: #087443;
+        }
+
+        .badge-withdraw {
+            background: #ffe8e8;
+            color: #b42318;
+        }
+
+        .badge-transfer {
+            background: #eee9ff;
+            color: #6941c6;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 45px;
+            color: #8994a5;
+        }
+
+        /* RESPONSIVE */
+
+        @media(max-width: 1100px) {
+            .stats {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media(max-width: 700px) {
+
+            .sidebar {
+                width: 70px;
+                padding: 15px 8px;
+            }
+
+            .logo h2,
+            .logo span,
+            .menu-title,
+            .menu a span {
+                display: none;
+            }
+
+            .logo-icon {
+                width: 45px;
+                height: 45px;
+            }
+
+            .menu a {
+                justify-content: center;
+            }
+
+            .main {
+                margin-left: 70px;
+                width: calc(100% - 70px);
+                padding: 18px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-box {
+                display: none;
+            }
+
+            .search {
+                width: 160px;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="sidebar">
+<div class="layout">
 
-```
-<div class="logo">
-    ATM SYSTEM
-    <small>ADMIN PANEL</small>
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <div class="logo-icon">ATM</div>
+
+            <h2>ATM SYSTEM</h2>
+
+            <span>ADMINISTRATION PANEL</span>
+        </div>
+
+
+        <div class="menu-title">
+            Main Menu
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="{% url 'admin_dashboard' %}">
+                <div class="icon">▣</div>
+                <span>Dashboard</span>
+            </a>
+
+
+            <a href="{% url 'accounts' %}">
+                <div class="icon">👤</div>
+                <span>Accounts</span>
+            </a>
+
+
+            <a href="{% url 'transactions' %}" class="active">
+                <div class="icon">↔</div>
+                <span>Transactions</span>
+            </a>
+
+
+            <a href="{% url 'bank_admins' %}">
+                <div class="icon">♙</div>
+                <span>Bank Admins</span>
+            </a>
+
+        </nav>
+
+
+        <div class="menu-title">
+            System
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="/admin/">
+                <div class="icon">⚙</div>
+                <span>Django Admin</span>
+            </a>
+
+
+            <a href="/admin/logout/">
+                <div class="icon">⇥</div>
+                <span>Logout</span>
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <div class="topbar">
+
+            <div>
+
+                <h1>Transactions</h1>
+
+                <p>
+                    Monitor all ATM financial transactions
+                </p>
+
+            </div>
+
+
+            <div class="admin-box">
+
+                👤 {{ request.user.username }}
+
+            </div>
+
+        </div>
+
+
+        <!-- STATISTICS -->
+
+        <div class="stats">
+
+            <div class="stat-card">
+
+                <div>
+
+                    <div class="stat-title">
+                        Total Transactions
+                    </div>
+
+                    <div class="stat-number">
+                        {{ total_transactions }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    ↔
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div>
+
+                    <div class="stat-title">
+                        Total Deposits
+                    </div>
+
+                    <div class="stat-number deposit">
+                        {{ total_deposits }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    +
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div>
+
+                    <div class="stat-title">
+                        Total Withdrawals
+                    </div>
+
+                    <div class="stat-number withdraw">
+                        {{ total_withdrawals }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    −
+                </div>
+
+            </div>
+
+
+            <div class="stat-card">
+
+                <div>
+
+                    <div class="stat-title">
+                        Total Transfers
+                    </div>
+
+                    <div class="stat-number transfer">
+                        {{ total_transfers }}
+                    </div>
+
+                </div>
+
+                <div class="stat-icon">
+                    ⇄
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TRANSACTIONS TABLE -->
+
+        <div class="content-card">
+
+            <div class="card-header">
+
+                <h2>
+                    Transaction History
+                </h2>
+
+
+                <input
+                    type="text"
+                    id="transactionSearch"
+                    class="search"
+                    placeholder="Search transaction..."
+                >
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table id="transactionsTable">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Account</th>
+
+                            <th>Customer</th>
+
+                            <th>Type</th>
+
+                            <th>Amount</th>
+
+                            <th>Description</th>
+
+                            <th>Date</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for transaction in transactions %}
+
+                        <tr>
+
+                            <td>
+                                {{ forloop.counter }}
+                            </td>
+
+
+                            <td class="account">
+
+                                {{ transaction.account.account_number }}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ transaction.account.full_name }}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if transaction.transaction_type == "DEPOSIT" %}
+
+                                    <span class="badge badge-deposit">
+                                        DEPOSIT
+                                    </span>
+
+                                {% elif transaction.transaction_type == "WITHDRAW" %}
+
+                                    <span class="badge badge-withdraw">
+                                        WITHDRAW
+                                    </span>
+
+                                {% elif transaction.transaction_type == "TRANSFER" %}
+
+                                    <span class="badge badge-transfer">
+                                        TRANSFER
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="badge">
+                                        {{ transaction.transaction_type }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {% if transaction.transaction_type == "DEPOSIT" %}
+
+                                    <span class="amount deposit">
+                                        + {{ transaction.amount }}
+                                    </span>
+
+                                {% elif transaction.transaction_type == "WITHDRAW" %}
+
+                                    <span class="amount withdraw">
+                                        - {{ transaction.amount }}
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="amount transfer">
+                                        {{ transaction.amount }}
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ transaction.description|default:"—" }}
+
+                            </td>
+
+
+                            <td>
+
+                                {{ transaction.created_at|date:"d M Y H:i" }}
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+
+                            <td
+                                colspan="7"
+                                class="empty"
+                            >
+                                No transactions found.
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </main>
+
 </div>
 
-<a href="/admin-dashboard/" class="menu">
-    🏠 Dashboard
-</a>
 
-<a href="/accounts/" class="menu">
-    💳 Accounts
-</a>
+<script>
 
-<a href="/transactions/" class="menu active">
-    💰 Transactions
-</a>
+const searchInput =
+    document.getElementById("transactionSearch");
 
-<a href="/bank-admins/" class="menu">
-    👤 Bank Admins
-</a>
 
-<a href="/logout/" class="menu">
-    🚪 Logout
-</a>
-```
+searchInput.addEventListener("keyup", function () {
 
-</div>
+    const searchValue =
+        this.value.toLowerCase();
 
-<div class="main">
 
-```
-<div class="header">
-    <h1>Transactions</h1>
-    <p>ATM transaction history</p>
-</div>
+    const rows =
+        document.querySelectorAll(
+            "#transactionsTable tbody tr"
+        );
 
-<div class="panel">
 
-    {% if transactions %}
+    rows.forEach(function(row) {
 
-    <table>
+        const text =
+            row.innerText.toLowerCase();
 
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Transaction</th>
-                <th>Amount</th>
-            </tr>
-        </thead>
 
-        <tbody>
+        if (text.includes(searchValue)) {
 
-            {% for transaction in transactions %}
+            row.style.display = "";
 
-            <tr>
-                <td>#{{ transaction.id }}</td>
-                <td>{{ transaction }}</td>
-                <td>{{ transaction.amount }}</td>
-            </tr>
+        } else {
 
-            {% endfor %}
+            row.style.display = "none";
 
-        </tbody>
+        }
 
-    </table>
+    });
 
-    {% else %}
+});
 
-    <div class="empty">
-        No transactions available.
-    </div>
-
-    {% endif %}
-
-</div>
-```
-
-</div>
+</script>
 
 </body>
 </html>

@@ -1,11 +1,8 @@
-
 from django.urls import path
-
 from . import views
 
 
 urlpatterns = [
-
     path(
         "admin-dashboard/",
         views.admin_dashboard,
@@ -13,9 +10,20 @@ urlpatterns = [
     ),
 
     path(
-        "admin-dashboard/add-account/",
-        views.add_account,
-        name="add_account"
+        "accounts/",
+        views.accounts,
+        name="accounts"
     ),
 
+    path(
+        "transactions/",
+        views.transactions,
+        name="transactions"
+    ),
+
+    path(
+        "bank-admins/",
+        views.bank_admins,
+        name="bank_admins"
+    ),
 ]
