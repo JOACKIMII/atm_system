@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bank Admins</title>
+
+```
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f7fb;
+    }
+
+    .sidebar {
+        position: fixed;
+        width: 220px;
+        height: 100vh;
+        background: #071a3d;
+        padding: 25px 15px;
+    }
+
+    .logo {
+        color: white;
+        text-align: center;
+        font-size: 21px;
+        font-weight: bold;
+        margin-bottom: 35px;
+    }
+
+    .logo small {
+        display: block;
+        color: #9db5dc;
+        margin-top: 5px;
+    }
+
+    .menu {
+        display: block;
+        color: #dce7ff;
+        text-decoration: none;
+        padding: 13px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+
+    .menu:hover,
+    .active {
+        background: #12448e;
+        color: white;
+    }
+
+    .main {
+        margin-left: 220px;
+        padding: 30px;
+    }
+
+    .header,
+    .panel {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        margin: 0;
+        color: #071a3d;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        background: #071a3d;
+        color: white;
+        padding: 13px;
+        text-align: left;
+    }
+
+    td {
+        padding: 13px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 30px;
+        color: #888;
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+```
+<div class="logo">
+    ATM SYSTEM
+    <small>ADMIN PANEL</small>
+</div>
+
+<a href="/admin-dashboard/" class="menu">
+    🏠 Dashboard
+</a>
+
+<a href="/accounts/" class="menu">
+    💳 Accounts
+</a>
+
+<a href="/transactions/" class="menu">
+    💰 Transactions
+</a>
+
+<a href="/bank-admins/" class="menu active">
+    👤 Bank Admins
+</a>
+
+<a href="/logout/" class="menu">
+    🚪 Logout
+</a>
+```
+
+</div>
+
+<div class="main">
+
+```
+<div class="header">
+    <h1>Bank Administrators</h1>
+    <p>ATM system administrators</p>
+</div>
+
+<div class="panel">
+
+    {% if admins %}
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Administrator</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for admin in admins %}
+
+            <tr>
+                <td>#{{ admin.id }}</td>
+                <td>{{ admin }}</td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+    <div class="empty">
+        No bank administrators available.
+    </div>
+
+    {% endif %}
+
+</div>
+```
+
+</div>
+
+</body>
+</html>

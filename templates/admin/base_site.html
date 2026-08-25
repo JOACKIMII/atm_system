@@ -1,0 +1,214 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>
+        {% block title %}ATM SYSTEM{% endblock %}
+    </title>
+
+    <link rel="stylesheet"
+          href="{% static 'admin/css/atm_admin.css' %}">
+</head>
+
+<body>
+
+<div class="atm-wrapper">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                🏦
+            </div>
+
+            <div>
+                <h2>ATM SYSTEM</h2>
+                <span>ADMIN PANEL</span>
+            </div>
+
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="{% url 'admin:index' %}"
+               class="menu-item active">
+
+                <span class="menu-icon">📊</span>
+                <span>Dashboard</span>
+
+            </a>
+
+
+            <a href="{% url 'admin:atm_account_changelist' %}"
+               class="menu-item">
+
+                <span class="menu-icon">💳</span>
+                <span>Accounts</span>
+
+            </a>
+
+
+            <a href="{% url 'admin:atm_transaction_changelist' %}"
+               class="menu-item">
+
+                <span class="menu-icon">💰</span>
+                <span>Transactions</span>
+
+            </a>
+
+
+            <a href="{% url 'admin:atm_bankadmin_changelist' %}"
+               class="menu-item">
+
+                <span class="menu-icon">👨‍💼</span>
+                <span>Bank Admins</span>
+
+            </a>
+
+
+            <a href="{% url 'admin:auth_user_changelist' %}"
+               class="menu-item">
+
+                <span class="menu-icon">👥</span>
+                <span>Users</span>
+
+            </a>
+
+
+            <a href="{% url 'admin:auth_group_changelist' %}"
+               class="menu-item">
+
+                <span class="menu-icon">🔐</span>
+                <span>Groups</span>
+
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <a href="/" class="menu-item">
+
+                <span class="menu-icon">🌐</span>
+                <span>View ATM Site</span>
+
+            </a>
+
+
+            <a href="{% url 'admin:logout' %}"
+               class="menu-item logout">
+
+                <span class="menu-icon">🚪</span>
+                <span>Logout</span>
+
+            </a>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+
+            <div class="top-left">
+
+                <button class="mobile-menu"
+                        onclick="toggleSidebar()">
+                    ☰
+                </button>
+
+                <div>
+
+                    <h1>
+                        {% block page_title %}
+                        Dashboard
+                        {% endblock %}
+                    </h1>
+
+                    <p>
+                        ATM Management System
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="admin-profile">
+
+                <div class="notification">
+                    🔔
+                    <span class="notification-dot"></span>
+                </div>
+
+
+                <div class="avatar">
+
+                    {{ user.username|first|upper }}
+
+                </div>
+
+
+                <div class="admin-info">
+
+                    <strong>
+                        {{ user.username }}
+                    </strong>
+
+                    <span>
+                        Administrator
+                    </span>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- PAGE CONTENT -->
+
+        <section class="content">
+
+            {% block content %}
+
+                {{ block.super }}
+
+            {% endblock %}
+
+        </section>
+
+
+    </main>
+
+</div>
+
+
+<script>
+
+function toggleSidebar() {
+
+    const sidebar =
+        document.querySelector('.sidebar');
+
+    sidebar.classList.toggle('open');
+
+}
+
+</script>
+
+</body>
+</html>

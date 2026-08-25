@@ -1,0 +1,525 @@
+{% extends "admin/base_site.html" %}
+
+{% load static %}
+
+
+{% block title %}
+
+ATM Dashboard
+
+{% endblock %}
+
+
+{% block page_title %}
+
+ATM Dashboard
+
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="dashboard">
+
+
+    <!-- STATISTICS -->
+
+    <div class="stats-grid">
+
+
+        <!-- ACCOUNTS -->
+
+        <div class="stat-card">
+
+            <div class="stat-icon blue">
+                💳
+            </div>
+
+            <div>
+
+                <span>
+                    Total Accounts
+                </span>
+
+                <strong>
+                    {{ total_accounts|default:"0" }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- TRANSACTIONS -->
+
+        <div class="stat-card">
+
+            <div class="stat-icon green">
+                💰
+            </div>
+
+            <div>
+
+                <span>
+                    Total Transactions
+                </span>
+
+                <strong>
+                    {{ total_transactions|default:"0" }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- BANK ADMINS -->
+
+        <div class="stat-card">
+
+            <div class="stat-icon purple">
+                👨‍💼
+            </div>
+
+            <div>
+
+                <span>
+                    Bank Admins
+                </span>
+
+                <strong>
+                    {{ total_bank_admins|default:"0" }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- USERS -->
+
+        <div class="stat-card">
+
+            <div class="stat-icon orange">
+                👥
+            </div>
+
+            <div>
+
+                <span>
+                    System Users
+                </span>
+
+                <strong>
+                    {{ total_users|default:"0" }}
+                </strong>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- QUICK ACTIONS -->
+
+    <div class="section-header">
+
+        <div>
+
+            <h2>
+                Quick Actions
+            </h2>
+
+            <p>
+                Manage your ATM system
+            </p>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="quick-grid">
+
+
+        <a href="{% url 'admin:atm_account_add' %}"
+           class="quick-card">
+
+            <span>
+                ➕
+            </span>
+
+            <div>
+
+                <strong>
+                    Add Account
+                </strong>
+
+                <small>
+                    Create new ATM account
+                </small>
+
+            </div>
+
+        </a>
+
+
+
+        <a href="{% url 'admin:atm_account_changelist' %}"
+           class="quick-card">
+
+            <span>
+                💳
+            </span>
+
+            <div>
+
+                <strong>
+                    Manage Accounts
+                </strong>
+
+                <small>
+                    View customer accounts
+                </small>
+
+            </div>
+
+        </a>
+
+
+
+        <a href="{% url 'admin:atm_transaction_changelist' %}"
+           class="quick-card">
+
+            <span>
+                💸
+            </span>
+
+            <div>
+
+                <strong>
+                    Transactions
+                </strong>
+
+                <small>
+                    View ATM transactions
+                </small>
+
+            </div>
+
+        </a>
+
+
+
+        <a href="{% url 'admin:atm_bankadmin_changelist' %}"
+           class="quick-card">
+
+            <span>
+                👨‍💼
+            </span>
+
+            <div>
+
+                <strong>
+                    Bank Admins
+                </strong>
+
+                <small>
+                    Manage administrators
+                </small>
+
+            </div>
+
+        </a>
+
+
+    </div>
+
+
+
+    <!-- RECENT TRANSACTIONS -->
+
+    <div class="section-header">
+
+        <div>
+
+            <h2>
+                Recent Transactions
+            </h2>
+
+            <p>
+                Latest ATM activity
+            </p>
+
+        </div>
+
+
+        <a href="{% url 'admin:atm_transaction_changelist' %}"
+           class="view-all">
+
+            View All →
+
+        </a>
+
+    </div>
+
+
+
+    <div class="table-card">
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Transaction
+                        </th>
+
+                        <th>
+                            Account
+                        </th>
+
+                        <th>
+                            Amount
+                        </th>
+
+                        <th>
+                            Type
+                        </th>
+
+                        <th>
+                            Date
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                    {% for transaction in recent_transactions %}
+
+
+                    <tr>
+
+                        <td>
+
+                            <strong>
+                                #{{ transaction.id }}
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            {{ transaction.account }}
+
+                        </td>
+
+
+                        <td>
+
+                            <strong>
+                                {{ transaction.amount }}
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="transaction-badge">
+
+                                {{ transaction.transaction_type|default:"Transaction" }}
+
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            {{ transaction.created_at|default:"-" }}
+
+                        </td>
+
+                    </tr>
+
+
+                    {% empty %}
+
+
+                    <tr>
+
+                        <td colspan="5"
+                            class="empty">
+
+                            No transactions available.
+
+                        </td>
+
+                    </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- ACCOUNTS -->
+
+    <div class="section-header">
+
+        <div>
+
+            <h2>
+                ATM Accounts
+            </h2>
+
+            <p>
+                Recently created accounts
+            </p>
+
+        </div>
+
+
+        <a href="{% url 'admin:atm_account_changelist' %}"
+           class="view-all">
+
+            View All →
+
+        </a>
+
+    </div>
+
+
+
+    <div class="table-card">
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Account
+                        </th>
+
+                        <th>
+                            Customer
+                        </th>
+
+                        <th>
+                            Balance
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                    {% for account in recent_accounts %}
+
+
+                    <tr>
+
+                        <td>
+
+                            <strong>
+                                {{ account.account_number }}
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            {{ account.customer_name|default:account }}
+
+                        </td>
+
+
+                        <td>
+
+                            <strong>
+                                {{ account.balance }}
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            <span class="status-active">
+                                Active
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+
+                    {% empty %}
+
+
+                    <tr>
+
+                        <td colspan="4"
+                            class="empty">
+
+                            No accounts available.
+
+                        </td>
+
+                    </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+{% endblock %}

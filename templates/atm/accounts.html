@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ATM Accounts</title>
+
+```
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f7fb;
+        color: #172033;
+    }
+
+    .sidebar {
+        position: fixed;
+        width: 220px;
+        height: 100vh;
+        background: #071a3d;
+        padding: 25px 15px;
+    }
+
+    .logo {
+        color: white;
+        text-align: center;
+        font-size: 21px;
+        font-weight: bold;
+        margin-bottom: 35px;
+    }
+
+    .logo small {
+        display: block;
+        color: #9db5dc;
+        margin-top: 5px;
+    }
+
+    .menu {
+        display: block;
+        text-decoration: none;
+        color: #dce7ff;
+        padding: 13px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+    }
+
+    .menu:hover,
+    .active {
+        background: #12448e;
+        color: white;
+    }
+
+    .main {
+        margin-left: 220px;
+        padding: 30px;
+    }
+
+    .header {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 20px;
+    }
+
+    h1 {
+        margin: 0;
+        color: #071a3d;
+    }
+
+    .panel {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,.05);
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        background: #071a3d;
+        color: white;
+        padding: 13px;
+        text-align: left;
+    }
+
+    td {
+        padding: 13px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .money {
+        color: #087443;
+        font-weight: bold;
+    }
+
+    .empty {
+        text-align: center;
+        padding: 30px;
+        color: #888;
+    }
+</style>
+```
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+```
+<div class="logo">
+    ATM SYSTEM
+    <small>ADMIN PANEL</small>
+</div>
+
+<a href="/admin-dashboard/" class="menu">
+    🏠 Dashboard
+</a>
+
+<a href="/accounts/" class="menu active">
+    💳 Accounts
+</a>
+
+<a href="/transactions/" class="menu">
+    💰 Transactions
+</a>
+
+<a href="/bank-admins/" class="menu">
+    👤 Bank Admins
+</a>
+
+<a href="/logout/" class="menu">
+    🚪 Logout
+</a>
+```
+
+</div>
+
+<div class="main">
+
+```
+<div class="header">
+    <h1>ATM Accounts</h1>
+    <p>Manage customer ATM accounts</p>
+</div>
+
+<div class="panel">
+
+    {% if accounts %}
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Account</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% for account in accounts %}
+
+            <tr>
+                <td>#{{ account.id }}</td>
+
+                <td>
+                    {{ account }}
+                </td>
+
+                <td class="money">
+                    {{ account.balance }}
+                </td>
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    {% else %}
+
+    <div class="empty">
+        No ATM accounts available.
+    </div>
+
+    {% endif %}
+
+</div>
+```
+
+</div>
+
+</body>
+</html>
+

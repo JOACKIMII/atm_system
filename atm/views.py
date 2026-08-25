@@ -1,319 +1,45 @@
-from decimal import Decimal, InvalidOperation
+from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
+from django.shortcuts import render
 
-from django.shortcuts import render, redirect
-
-from .models import Account, Transaction
-
-
-# =========================================================
-# HOME
-# =========================================================
-
-def home(request):
-    return render(request, "atm/home.html")
+from .models import Account, Transaction, BankAdmin
 
 
-# =========================================================
-# CUSTOMER LOGIN
-# =========================================================
+@login_required
+def admin_dashboard(request):
+    total_accounts = Account.objects.count()
 
-def login_view(request):
+    total_transactions = Transaction.objects.count()
 
-    if request.session.get("account_id"):
-        return redirect("dashboard")
+    total_admins = BankAdmin.objects.count()
 
-    error = None
-
-    if request.method == "POST":
-
-        account_number = request.POST.get(
-            "account_number",
-            ""
-        ).strip()
-
-        pin = request.POST.get(
-            "pin",
-            ""
-        ).strip()
-
-        if not account_number or not pin:
-
-            error = "Please enter account number and PIN."
-
-        else:
-
-            try:
-
-                # Find account using account number
-                account = Account.objects.get(
-                    account_number=account_number
-                )
-
-                # IMPORTANT:
-                # PIN in database is hashed.
-                # Therefore we must use check_pin().
-                if account.check_pin(pin):
-
-                    request.session["account_id"] = account.id
-
-                    request.session.save()
-
-                    return redirect("dashboard")
-
-                else:
-
-                    error = "Invalid account number or PIN."
-
-            except Account.DoesNotExist:
-
-                error = "Invalid account number or PIN."
-
-    return render(
-        request,
-        "atm/login.html",
-        {
-            "error": error
-        }
+    total_balance = (
+        Account.objects.aggregate(total=Sum("balance"))["total"] or 0
     )
 
-
-# =========================================================
-# CUSTOMER LOGOUT
-# =========================================================
-
-def logout_view(request):
-
-    request.session.flush()
-
-    return redirect("login")
-
-
-# =========================================================
-# GET LOGGED-IN ACCOUNT
-# =========================================================
-
-def get_logged_account(request):
-
-    account_id = request.session.get("account_id")
-
-    if not account_id:
-        return None
-
-    try:
-
-        return Account.objects.get(
-            id=account_id
-        )
-
-    except Account.DoesNotExist:
-
-        request.session.flush()
-
-        return None
-
-
-# =========================================================
-# DASHBOARD
-# =========================================================
-
-def dashboard(request):
-
-    account = get_logged_account(request)
-
-    if not account:
-        return redirect("login")
-
-    return render(
-        request,
-        "atm/dashboard.html",
-        {
-            "account": account
-        }
-    )
-
-
-# =========================================================
-# WITHDRAW
-# =========================================================
-
-def withdraw(request):
-
-    account = get_logged_account(request)
-
-    if not account:
-        return redirect("login")
-
-    error = None
-    success = None
-
-    if request.method == "POST":
-
-        amount_text = request.POST.get(
-            "amount",
-            ""
-        ).strip()
-
-        try:
-
-            amount = Decimal(amount_text)
-
-            if amount <= 0:
-
-                error = "Please enter a valid amount."
-
-            elif amount > account.balance:
-
-                error = "Insufficient balance."
-
-            else:
-
-                account.balance -= amount
-
-                account.save(
-                    update_fields=["balance"]
-                )
-
-                Transaction.objects.create(
-                    account=account,
-                    transaction_type="WITHDRAW",
-                    amount=amount,
-                    description="Cash withdrawal"
-                )
-
-                success = (
-                    f"Withdrawal of TSh "
-                    f"{amount:,.2f} was successful."
-                )
-
-        except (
-            InvalidOperation,
-            ValueError,
-            TypeError
-        ):
-
-            error = "Please enter a valid amount."
-
-    return render(
-        request,
-        "atm/withdraw.html",
-        {
-            "account": account,
-            "error": error,
-            "success": success
-        }
-    )
-
-
-# =========================================================
-# DEPOSIT
-# =========================================================
-
-def deposit(request):
-
-    account = get_logged_account(request)
-
-    if not account:
-        return redirect("login")
-
-    error = None
-    success = None
-
-    if request.method == "POST":
-
-        amount_text = request.POST.get(
-            "amount",
-            ""
-        ).strip()
-
-        try:
-
-            amount = Decimal(amount_text)
-
-            if amount <= 0:
-
-                error = "Please enter a valid amount."
-
-            else:
-
-                account.balance += amount
-
-                account.save(
-                    update_fields=["balance"]
-                )
-
-                Transaction.objects.create(
-                    account=account,
-                    transaction_type="DEPOSIT",
-                    amount=amount,
-                    description="Cash deposit"
-                )
-
-                success = (
-                    f"Deposit of TSh "
-                    f"{amount:,.2f} was successful."
-                )
-
-        except (
-            InvalidOperation,
-            ValueError,
-            TypeError
-        ):
-
-            error = "Please enter a valid amount."
-
-    return render(
-        request,
-        "atm/deposit.html",
-        {
-            "account": account,
-            "error": error,
-            "success": success
-        }
-    )
-
-
-# =========================================================
-# TRANSACTIONS
-# =========================================================
-
-def transactions(request):
-
-    account = get_logged_account(request)
-
-    if not account:
-        return redirect("login")
-
-    transaction_list = (
+    recent_transactions = (
         Transaction.objects
-        .filter(account=account)
-        .order_by("-created_at")
+        .all()
+        .order_by("-id")[:10]
     )
+
+    recent_accounts = (
+        Account.objects
+        .all()
+        .order_by("-id")[:10]
+    )
+
+    context = {
+        "total_accounts": total_accounts,
+        "total_transactions": total_transactions,
+        "total_admins": total_admins,
+        "total_balance": total_balance,
+        "recent_transactions": recent_transactions,
+        "recent_accounts": recent_accounts,
+    }
 
     return render(
         request,
-        "atm/transactions.html",
-        {
-            "account": account,
-            "transactions": transaction_list
-        }
-    )
-
-
-# =========================================================
-# EXPLORE SERVICES
-# =========================================================
-
-def explore(request):
-
-    account = get_logged_account(request)
-
-    if not account:
-        return redirect("login")
-
-    return render(
-        request,
-        "atm/explore.html",
-        {
-            "account": account
-        }
+        "atm/admin_dashboard.html",
+        context
     )
