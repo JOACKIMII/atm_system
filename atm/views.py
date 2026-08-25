@@ -22,6 +22,7 @@ def home(request):
 
 def login_view(request):
 
+    # Kama tayari ameingia
     if request.session.get('account_id'):
         return redirect('dashboard')
 
@@ -39,27 +40,37 @@ def login_view(request):
             ''
         ).strip()
 
-        try:
+        # Hakikisha fields hazijaachwa wazi
+        if not account_number or not pin:
 
-            # Search using account number only.
-            # PIN is hashed, so we must NOT compare it
-            # directly with the database value.
-            account = Account.objects.get(
-                account_number=account_number
-            )
+            error = 'Please enter account number and PIN.'
 
-            # Correct way to verify hashed PIN
-            if account.check_pin(pin):
+        else:
 
-                request.session['account_id'] = account.id
+            try:
 
-                return redirect('dashboard')
+                # Tafuta account kwa account number pekee
+                account = Account.objects.get(
+                    account_number=account_number
+                )
 
-            error = 'Invalid account number or PIN.'
+                # Linganisha PIN iliyohifadhiwa kwa hash
+                if account.check_pin(pin):
 
-        except Account.DoesNotExist:
+                    request.session['account_id'] = account.id
 
-            error = 'Invalid account number or PIN.'
+                    # Hifadhi session
+                    request.session.save()
+
+                    return redirect('dashboard')
+
+                else:
+
+                    error = 'Invalid account number or PIN.'
+
+            except Account.DoesNotExist:
+
+                error = 'Invalid account number or PIN.'
 
     return render(
         request,
