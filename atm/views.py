@@ -54,12 +54,12 @@ def login_view(request):
                     account_number=account_number
                 )
 
-                # Linganisha PIN iliyohifadhiwa kwa hash
+                # PIN imehifadhiwa kwa hash,
+                # kwa hiyo tunatumia check_pin()
                 if account.check_pin(pin):
 
+                    # Hifadhi account kwenye session
                     request.session['account_id'] = account.id
-
-                    # Hifadhi session
                     request.session.save()
 
                     return redirect('dashboard')
