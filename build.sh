@@ -2,8 +2,13 @@
 
 set -o errexit
 
-pip install -r requirements.txt
+echo "Running migrations..."
+python manage.py migrate --noinput
 
-python manage.py collectstatic --no-input
+echo "Resetting admin password..."
+python manage.py reset_admin --password="AdminATM@2026"
 
-python manage.py migrate
+echo "Collecting static files..."
+python manage.py collectstatic --noinput
+
+echo "Build completed successfully."
