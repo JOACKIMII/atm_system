@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Balance</title>
+</head>
+
+<body>
+
+    <h1>ACCOUNT BALANCE</h1>
+
+    <h2>
+        TSh {{ account.balance|floatformat:2 }}
+    </h2>
+
+    <br>
+
+    <a href="{% url 'dashboard' %}">
+        Back to Dashboard
+    </a>
+
+</body>
+</html>

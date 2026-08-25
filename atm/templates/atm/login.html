@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ATM System - Login</title>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 20px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #001b36,
+                    #003b73,
+                    #0066cc,
+                    #00a8ff
+                );
+
+        }
+
+
+        .login-card {
+
+            width: 100%;
+
+            max-width: 430px;
+
+            background: white;
+
+            padding: 40px 35px;
+
+            border-radius: 25px;
+
+            box-shadow:
+                0 25px 60px
+                rgba(0, 0, 0, 0.35);
+
+        }
+
+
+        .atm-circle {
+
+            width: 85px;
+
+            height: 85px;
+
+            margin:
+                0 auto 20px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            color: white;
+
+            font-size: 24px;
+
+            font-weight: bold;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #005bea,
+                    #00a8ff
+                );
+
+            box-shadow:
+                0 10px 25px
+                rgba(0, 91, 234, 0.35);
+
+        }
+
+
+        h1 {
+
+            text-align: center;
+
+            color: #003b73;
+
+            margin-bottom: 8px;
+
+            font-size: 29px;
+
+        }
+
+
+        .subtitle {
+
+            text-align: center;
+
+            color: #777;
+
+            margin-bottom: 30px;
+
+        }
+
+
+        .error {
+
+            background: #fff0f0;
+
+            color: #c62828;
+
+            border-left:
+                5px solid #e53935;
+
+            padding: 13px;
+
+            border-radius: 8px;
+
+            margin-bottom: 20px;
+
+        }
+
+
+        .form-group {
+
+            margin-bottom: 20px;
+
+        }
+
+
+        label {
+
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: #222;
+
+            font-weight: bold;
+
+        }
+
+
+        input {
+
+            width: 100%;
+
+            height: 54px;
+
+            padding: 0 15px;
+
+            border:
+                2px solid #dce8f5;
+
+            border-radius: 11px;
+
+            font-size: 16px;
+
+            outline: none;
+
+        }
+
+
+        input:focus {
+
+            border-color: #0074d9;
+
+            box-shadow:
+                0 0 0 4px
+                rgba(0, 116, 217, 0.10);
+
+        }
+
+
+        .login-button {
+
+            width: 100%;
+
+            height: 55px;
+
+            border: none;
+
+            border-radius: 11px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #005bea,
+                    #00a8ff
+                );
+
+            color: white;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+        }
+
+
+        .login-button:hover {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #0047bd,
+                    #008fdd
+                );
+
+        }
+
+
+        .footer {
+
+            text-align: center;
+
+            color: #999;
+
+            font-size: 12px;
+
+            margin-top: 25px;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="login-card">
+
+
+    <div class="atm-circle">
+        ATM
+    </div>
+
+
+    <h1>
+        ATM SYSTEM
+    </h1>
+
+
+    <p class="subtitle">
+        Secure Banking Login
+    </p>
+
+
+    {% if error %}
+
+        <div class="error">
+            {{ error }}
+        </div>
+
+    {% endif %}
+
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+
+        <div class="form-group">
+
+            <label for="account_number">
+                Account Number
+            </label>
+
+            <input
+                type="text"
+                id="account_number"
+                name="account_number"
+                placeholder="Enter account number"
+                required
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label for="pin">
+                PIN
+            </label>
+
+            <input
+                type="password"
+                id="pin"
+                name="pin"
+                placeholder="Enter PIN"
+                maxlength="6"
+                required
+            >
+
+        </div>
+
+
+        <button
+            type="submit"
+            class="login-button"
+        >
+            LOGIN
+        </button>
+
+
+    </form>
+
+
+    <div class="footer">
+        ATM SYSTEM © 2026
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

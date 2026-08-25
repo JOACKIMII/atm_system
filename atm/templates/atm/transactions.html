@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Transactions - ATM System
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            padding: 25px;
+
+            font-family: Arial, sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #001b36,
+                    #003b73,
+                    #0074d9,
+                    #00a8ff
+                );
+
+        }
+
+
+        .container {
+
+            max-width: 1000px;
+
+            margin: auto;
+
+        }
+
+
+        .card {
+
+            background: white;
+
+            border-radius: 20px;
+
+            padding: 30px;
+
+            box-shadow:
+                0 20px 50px
+                rgba(0,0,0,0.25);
+
+        }
+
+
+        h1 {
+
+            color: #003b73;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .account {
+
+            color: #777;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .table-container {
+
+            overflow-x: auto;
+
+        }
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+        }
+
+
+        th {
+
+            background: #003b73;
+
+            color: white;
+
+            padding: 15px;
+
+            text-align: left;
+
+        }
+
+
+        td {
+
+            padding: 14px;
+
+            border-bottom:
+                1px solid #e5e5e5;
+
+        }
+
+
+        tr:hover {
+
+            background: #f4f9ff;
+
+        }
+
+
+        .deposit {
+
+            color: #16833a;
+
+            font-weight: bold;
+
+        }
+
+
+        .withdraw {
+
+            color: #d62828;
+
+            font-weight: bold;
+
+        }
+
+
+        .back {
+
+            display: inline-block;
+
+            margin-top: 25px;
+
+            padding: 13px 22px;
+
+            background: #0074d9;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 10px;
+
+            font-weight: bold;
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            body {
+                padding: 10px;
+            }
+
+            .card {
+                padding: 18px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+
+<div class="card">
+
+
+    <h1>
+        Transaction History
+    </h1>
+
+
+    <p class="account">
+
+        Account:
+        <strong>
+            {{ account.account_number }}
+        </strong>
+
+        —
+        
+        {{ account.full_name }}
+
+    </p>
+
+
+    <div class="table-container">
+
+        <table>
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Type
+                    </th>
+
+                    <th>
+                        Amount
+                    </th>
+
+                    <th>
+                        Description
+                    </th>
+
+                    <th>
+                        Date
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            {% for transaction in transactions %}
+
+                <tr>
+
+                    <td>
+
+                        {% if transaction.transaction_type == 'DEPOSIT' %}
+
+                            <span class="deposit">
+                                DEPOSIT
+                            </span>
+
+                        {% elif transaction.transaction_type == 'WITHDRAW' %}
+
+                            <span class="withdraw">
+                                WITHDRAW
+                            </span>
+
+                        {% else %}
+
+                            {{ transaction.transaction_type }}
+
+                        {% endif %}
+
+                    </td>
+
+
+                    <td>
+
+                        TSh
+                        {{ transaction.amount|floatformat:2 }}
+
+                    </td>
+
+
+                    <td>
+
+                        {{ transaction.description }}
+
+                    </td>
+
+
+                    <td>
+
+                        {{ transaction.created_at|date:"d M Y H:i" }}
+
+                    </td>
+
+                </tr>
+
+
+            {% empty %}
+
+                <tr>
+
+                    <td
+                        colspan="4"
+                        style="text-align:center;"
+                    >
+
+                        No transactions yet.
+
+                    </td>
+
+                </tr>
+
+            {% endfor %}
+
+
+            </tbody>
+
+
+        </table>
+
+    </div>
+
+
+    <a
+        href="{% url 'dashboard' %}"
+        class="back"
+    >
+        ← Back to Dashboard
+    </a>
+
+
+</div>
+
+
+</div>
+
+
+</body>
+
+</html>

@@ -1,0 +1,474 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>ATM Dashboard</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+
+            min-height: 100vh;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #001f3f,
+                    #004e92,
+                    #0072ff
+                );
+
+            color: white;
+        }
+
+        /* NAVBAR */
+
+        .navbar {
+            background: #001a33;
+
+            padding: 18px 7%;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            box-shadow:
+                0 4px 20px
+                rgba(0,0,0,0.3);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .logo span {
+            color: #38bdf8;
+        }
+
+        .logout {
+            text-decoration: none;
+
+            color: white;
+
+            background: #dc2626;
+
+            padding: 10px 20px;
+
+            border-radius: 25px;
+
+            font-weight: bold;
+        }
+
+        /* CONTAINER */
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+
+            margin: auto;
+
+            padding: 45px 0;
+        }
+
+        /* WELCOME */
+
+        .welcome {
+            text-align: center;
+
+            margin-bottom: 35px;
+        }
+
+        .welcome h1 {
+            font-size: 42px;
+
+            margin-bottom: 10px;
+        }
+
+        .welcome p {
+            color: #dbeafe;
+        }
+
+        /* ACCOUNT */
+
+        .account {
+            background:
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.12
+                );
+
+            border:
+                1px solid
+                rgba(
+                    255,
+                    255,
+                    255,
+                    0.2
+                );
+
+            border-radius: 20px;
+
+            padding: 30px;
+
+            text-align: center;
+
+            margin-bottom: 35px;
+        }
+
+        .account h2 {
+            color: #7dd3fc;
+
+            margin-bottom: 10px;
+        }
+
+        .balance {
+            font-size: 35px;
+
+            font-weight: bold;
+
+            margin-top: 10px;
+        }
+
+        /* SERVICES */
+
+        .services {
+            display: grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(
+                        240px,
+                        1fr
+                    )
+                );
+
+            gap: 25px;
+        }
+
+        .service {
+            display: block;
+
+            text-decoration: none;
+
+            background: white;
+
+            color: #123;
+
+            padding: 30px;
+
+            border-radius: 20px;
+
+            min-height: 220px;
+
+            box-shadow:
+                0 12px 30px
+                rgba(0,0,0,0.25);
+
+            transition: 0.3s;
+        }
+
+        .service:hover {
+            transform:
+                translateY(-8px);
+
+            box-shadow:
+                0 20px 40px
+                rgba(0,0,0,0.35);
+        }
+
+        .icon {
+            width: 60px;
+            height: 60px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #0066ff,
+                    #00bfff
+                );
+
+            border-radius: 16px;
+
+            font-size: 28px;
+
+            margin-bottom: 20px;
+        }
+
+        .service h3 {
+            color: #003b73;
+
+            font-size: 21px;
+
+            margin-bottom: 10px;
+        }
+
+        .service p {
+            color: #555;
+
+            line-height: 1.6;
+        }
+
+        /* FOOTER */
+
+        footer {
+            text-align: center;
+
+            padding: 25px;
+
+            background:
+                #001a33;
+
+            color: #bfdbfe;
+
+            margin-top: 40px;
+        }
+
+        @media (max-width: 600px) {
+
+            .welcome h1 {
+                font-size: 30px;
+            }
+
+            .container {
+                width: 94%;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================
+     NAVBAR
+===================================== -->
+
+<nav class="navbar">
+
+    <div class="logo">
+
+        ATM
+        <span>SYSTEM</span>
+
+    </div>
+
+    <a
+        href="{% url 'logout' %}"
+        class="logout"
+    >
+        Logout
+    </a>
+
+</nav>
+
+
+<!-- =====================================
+     MAIN
+===================================== -->
+
+<div class="container">
+
+
+    <!-- WELCOME -->
+
+    <div class="welcome">
+
+        <h1>
+            Welcome,
+            {{ account.full_name }}
+        </h1>
+
+        <p>
+            Karibu kwenye ATM Banking System
+        </p>
+
+    </div>
+
+
+    <!-- ACCOUNT -->
+
+    <div class="account">
+
+        <h2>
+            Account Number
+        </h2>
+
+        <p>
+            {{ account.account_number }}
+        </p>
+
+        <br>
+
+        <h2>
+            Current Balance
+        </h2>
+
+        <div class="balance">
+
+            TSh
+            {{ account.balance|floatformat:2 }}
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+         SERVICES
+    ====================================== -->
+
+    <div class="services">
+
+
+        <!-- WITHDRAW -->
+
+        <a
+            href="{% url 'withdraw' %}"
+            class="service"
+        >
+
+            <div class="icon">
+                💵
+            </div>
+
+            <h3>
+                Withdraw
+            </h3>
+
+            <p>
+                Toa fedha kwenye akaunti yako
+                kwa urahisi na usalama.
+            </p>
+
+        </a>
+
+
+        <!-- DEPOSIT -->
+
+        <a
+            href="{% url 'deposit' %}"
+            class="service"
+        >
+
+            <div class="icon">
+                💰
+            </div>
+
+            <h3>
+                Deposit
+            </h3>
+
+            <p>
+                Weka fedha kwenye akaunti yako.
+            </p>
+
+        </a>
+
+
+        <!-- TRANSACTIONS -->
+
+        <a
+            href="{% url 'transactions' %}"
+            class="service"
+        >
+
+            <div class="icon">
+                📊
+            </div>
+
+            <h3>
+                Transactions
+            </h3>
+
+            <p>
+                Angalia historia ya miamala
+                ya akaunti yako.
+            </p>
+
+        </a>
+
+
+        <!-- =================================
+             EXPLORE SERVICES
+        ================================== -->
+
+        <a
+            href="{% url 'explore' %}"
+            class="service"
+        >
+
+            <div class="icon">
+                🌐
+            </div>
+
+            <h3>
+                Explore Services
+            </h3>
+
+            <p>
+                Location, Contact,
+                Bank History na
+                huduma nyingine.
+            </p>
+
+        </a>
+
+
+    </div>
+
+
+</div>
+
+
+<!-- =====================================
+     FOOTER
+===================================== -->
+
+<footer>
+
+    <p>
+        © 2026 ATM SYSTEM
+    </p>
+
+    <p>
+        Safe • Secure • Reliable Banking
+    </p>
+
+</footer>
+
+
+</body>
+
+</html>

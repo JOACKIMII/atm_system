@@ -1,0 +1,1262 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ATM System</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --blue: #0066ff;
+            --blue-dark: #003b99;
+            --blue-light: #38bdf8;
+            --dark-blue: #001b44;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: white;
+            background: #003b99;
+        }
+
+
+        /* ================= NAVBAR ================= */
+
+        .navbar {
+            height: 75px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 7%;
+
+            background: rgba(0, 38, 102, 0.92);
+
+            border-bottom: 1px solid rgba(255,255,255,0.15);
+
+            position: relative;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 800;
+            color: white;
+        }
+
+        .logo span {
+            color: #60c7ff;
+        }
+
+        .logo-icon {
+            width: 35px;
+            height: 35px;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-right: 8px;
+
+            border-radius: 9px;
+
+            background: #1687ff;
+            color: white !important;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 35px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+
+            color: rgba(255,255,255,0.85);
+
+            font-size: 14px;
+            font-weight: 600;
+
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #60c7ff;
+        }
+
+        .login-btn {
+            text-decoration: none;
+
+            padding: 11px 26px;
+
+            border-radius: 8px;
+
+            background: #1687ff;
+            color: white;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            transition: 0.3s;
+        }
+
+        .login-btn:hover {
+            background: #38a1ff;
+            transform: translateY(-2px);
+        }
+
+
+        /* ================= HERO ================= */
+
+        .hero {
+            min-height: 650px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 80px 8%;
+
+            position: relative;
+
+            overflow: hidden;
+
+            background-image:
+                linear-gradient(
+                    90deg,
+                    rgba(0, 35, 95, 0.96) 0%,
+                    rgba(0, 68, 160, 0.85) 42%,
+                    rgba(0, 72, 160, 0.50) 100%
+                ),
+                url("{% static 'atm/images/kilimanjaro.jpg' %}");
+
+            background-size: cover;
+            background-position: center;
+        }
+
+
+        /* dark blue overlay */
+
+        .hero::after {
+            content: "";
+
+            position: absolute;
+
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(0, 36, 95, 0.20),
+                    rgba(0, 25, 70, 0.45)
+                );
+
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 600px;
+
+            position: relative;
+            z-index: 2;
+        }
+
+        .badge {
+            display: inline-block;
+
+            padding: 9px 16px;
+
+            border-radius: 50px;
+
+            background: rgba(56, 189, 248, 0.18);
+
+            border: 1px solid rgba(125, 211, 252, 0.45);
+
+            color: #bae6fd;
+
+            font-size: 11px;
+            font-weight: 700;
+
+            margin-bottom: 22px;
+        }
+
+        .hero h1 {
+            font-size: 62px;
+
+            line-height: 1.05;
+
+            letter-spacing: -2px;
+
+            margin-bottom: 25px;
+        }
+
+        .hero h1 span {
+            display: block;
+
+            color: #60c7ff;
+        }
+
+        .hero-content > p {
+            max-width: 520px;
+
+            color: rgba(255,255,255,0.80);
+
+            font-size: 17px;
+
+            line-height: 1.7;
+
+            margin-bottom: 32px;
+        }
+
+
+        /* ================= BUTTONS ================= */
+
+        .hero-buttons {
+            display: flex;
+            gap: 14px;
+        }
+
+        .primary-btn,
+        .secondary-btn {
+
+            text-decoration: none;
+
+            padding: 14px 23px;
+
+            border-radius: 9px;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            transition: 0.3s;
+        }
+
+        .primary-btn {
+            background: #1687ff;
+
+            color: white;
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        .primary-btn:hover {
+            background: #38a1ff;
+
+            transform: translateY(-3px);
+        }
+
+        .secondary-btn {
+            background: rgba(255,255,255,0.10);
+
+            border: 1px solid rgba(255,255,255,0.35);
+
+            color: white;
+
+            backdrop-filter: blur(8px);
+        }
+
+        .secondary-btn:hover {
+            background: rgba(255,255,255,0.20);
+        }
+
+
+        /* ================= SECURITY ================= */
+
+        .security {
+            display: flex;
+
+            gap: 30px;
+
+            margin-top: 45px;
+        }
+
+        .security-item {
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+        }
+
+        .security-item strong {
+            color: #60c7ff;
+
+            font-size: 19px;
+        }
+
+        .security-item b {
+            display: block;
+
+            font-size: 12px;
+        }
+
+        .security-item small {
+            display: block;
+
+            margin-top: 3px;
+
+            color: rgba(255,255,255,0.60);
+
+            font-size: 10px;
+        }
+
+
+        /* ================= ATM MACHINE ================= */
+
+        .atm-card {
+
+            width: 390px;
+
+            position: relative;
+
+            z-index: 2;
+        }
+
+        .card-glow {
+
+            position: absolute;
+
+            width: 350px;
+            height: 350px;
+
+            right: 0;
+            top: 50px;
+
+            background: #38bdf8;
+
+            filter: blur(100px);
+
+            opacity: 0.35;
+        }
+
+        .atm-machine {
+
+            position: relative;
+
+            padding: 27px;
+
+            border-radius: 25px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #082b63,
+                    #001536
+                );
+
+            border: 1px solid rgba(125,211,252,0.30);
+
+            box-shadow:
+                0 30px 70px rgba(0,0,0,0.45);
+        }
+
+        .machine-top {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 20px;
+        }
+
+        .machine-logo {
+
+            color: white;
+
+            font-weight: 800;
+        }
+
+        .machine-logo span {
+
+            color: #60c7ff;
+        }
+
+        .status {
+
+            color: #4ade80;
+
+            font-size: 9px;
+
+            font-weight: 700;
+        }
+
+        .status span {
+
+            display: inline-block;
+
+            width: 6px;
+            height: 6px;
+
+            margin-right: 4px;
+
+            border-radius: 50%;
+
+            background: #4ade80;
+        }
+
+
+        /* ================= ATM SCREEN ================= */
+
+        .screen {
+
+            min-height: 190px;
+
+            padding: 28px 20px;
+
+            border-radius: 12px;
+
+            text-align: center;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #075985,
+                    #0369a1
+                );
+
+            box-shadow:
+                inset 0 0 25px rgba(0,0,0,0.30);
+        }
+
+        .screen-logo {
+
+            color: #bae6fd;
+
+            font-size: 9px;
+
+            font-weight: 800;
+
+            letter-spacing: 2px;
+
+            margin-bottom: 20px;
+        }
+
+        .screen h3 {
+
+            font-size: 22px;
+
+            margin-bottom: 8px;
+        }
+
+        .screen p {
+
+            color: #dbeafe;
+
+            font-size: 11px;
+
+            line-height: 1.5;
+        }
+
+        .screen-line {
+
+            height: 1px;
+
+            margin: 20px 0 12px;
+
+            background: rgba(255,255,255,0.20);
+        }
+
+        .screen-buttons {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            color: #bae6fd;
+
+            font-size: 9px;
+        }
+
+
+        /* ================= CARD SLOT ================= */
+
+        .card-slot {
+
+            width: 160px;
+
+            height: 30px;
+
+            margin: 22px auto;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 8px;
+
+            border-radius: 5px;
+
+            background: #000b20;
+
+            color: #64748b;
+
+            font-size: 7px;
+        }
+
+        .slot-light {
+
+            width: 5px;
+            height: 5px;
+
+            border-radius: 50%;
+
+            background: #22c55e;
+        }
+
+
+        /* ================= KEYPAD ================= */
+
+        .keypad {
+
+            width: 190px;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 9px;
+
+            margin: auto;
+        }
+
+        .keypad span {
+
+            height: 35px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 6px;
+
+            background: #0d3b78;
+
+            color: #dbeafe;
+
+            font-size: 11px;
+
+            box-shadow:
+                0 3px 0 #001b44;
+        }
+
+        .keypad .cancel {
+            color: #f87171;
+        }
+
+        .keypad .enter {
+            color: #4ade80;
+        }
+
+
+        /* ================= SERVICES ================= */
+
+        .services {
+
+            padding: 90px 8%;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #003b99,
+                    #0066cc
+                );
+        }
+
+        .section-title {
+
+            max-width: 600px;
+
+            text-align: center;
+
+            margin: 0 auto 50px;
+        }
+
+        .section-title > span {
+
+            color: #7dd3fc;
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            letter-spacing: 2px;
+        }
+
+        .section-title h2 {
+
+            color: white;
+
+            font-size: 36px;
+
+            margin: 12px 0;
+        }
+
+        .section-title p {
+
+            color: rgba(255,255,255,0.70);
+
+            line-height: 1.6;
+        }
+
+
+        /* ================= SERVICE CARDS ================= */
+
+        .service-grid {
+
+            max-width: 1100px;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 20px;
+
+            margin: auto;
+        }
+
+        .service-card {
+
+            padding: 27px;
+
+            border-radius: 15px;
+
+            background:
+                rgba(255,255,255,0.10);
+
+            border:
+                1px solid rgba(255,255,255,0.18);
+
+            backdrop-filter: blur(10px);
+
+            transition: 0.3s;
+        }
+
+        .service-card:hover {
+
+            transform: translateY(-7px);
+
+            background:
+                rgba(255,255,255,0.16);
+
+            box-shadow:
+                0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .service-icon {
+
+            width: 45px;
+            height: 45px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 10px;
+
+            margin-bottom: 20px;
+
+            font-size: 20px;
+
+            background: rgba(255,255,255,0.15);
+
+            color: white;
+        }
+
+        .service-card h3 {
+
+            color: white;
+
+            font-size: 17px;
+
+            margin-bottom: 10px;
+        }
+
+        .service-card p {
+
+            color: rgba(255,255,255,0.70);
+
+            font-size: 13px;
+
+            line-height: 1.6;
+        }
+
+
+        /* ================= FOOTER ================= */
+
+        footer {
+
+            padding: 35px 8%;
+
+            text-align: center;
+
+            background: #001b44;
+
+            color: white;
+        }
+
+        footer .logo {
+
+            margin-bottom: 10px;
+        }
+
+        footer p {
+
+            color: #93c5fd;
+
+            font-size: 12px;
+
+            margin-bottom: 12px;
+        }
+
+        footer small {
+
+            color: #64748b;
+
+            font-size: 10px;
+        }
+
+
+        /* ================= MOBILE ================= */
+
+        @media (max-width: 900px) {
+
+            .hero {
+
+                flex-direction: column;
+
+                text-align: center;
+
+                gap: 60px;
+
+                padding-top: 60px;
+            }
+
+            .hero-content {
+
+                max-width: 700px;
+            }
+
+            .hero-content > p {
+
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-buttons {
+
+                justify-content: center;
+            }
+
+            .security {
+
+                justify-content: center;
+            }
+
+            .service-grid {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+            }
+        }
+
+
+        @media (max-width: 600px) {
+
+            .navbar {
+
+                padding: 0 5%;
+            }
+
+            .nav-links {
+
+                display: none;
+            }
+
+            .hero {
+
+                padding: 55px 5%;
+            }
+
+            .hero h1 {
+
+                font-size: 43px;
+            }
+
+            .security {
+
+                flex-direction: column;
+
+                align-items: center;
+            }
+
+            .atm-card {
+
+                width: 100%;
+
+                max-width: 350px;
+            }
+
+            .service-grid {
+
+                grid-template-columns: 1fr;
+            }
+
+            .services {
+
+                padding: 65px 5%;
+            }
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+    <!-- ================= NAVBAR ================= -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+
+            <span class="logo-icon">₿</span>
+
+            ATM<span>System</span>
+
+        </div>
+
+
+        <div class="nav-links">
+
+            <a href="#home">
+                Home
+            </a>
+
+            <a href="#services">
+                Services
+            </a>
+
+            <a href="#about">
+                About
+            </a>
+
+        </div>
+
+
+        <a href="{% url 'login' %}" class="login-btn">
+    Login
+</a>
+
+    </nav>
+
+
+
+    <!-- ================= HERO ================= -->
+
+    <main id="home" class="hero">
+
+
+        <div class="hero-content">
+
+            <div class="badge">
+                ● SECURE TANZANIA BANKING
+            </div>
+
+
+            <h1>
+
+                Your Money.
+
+                <span>
+                    Your Control.
+                </span>
+
+            </h1>
+
+
+            <p>
+
+                Simple, fast and secure ATM banking.
+                Manage your money anytime with our
+                modern banking system.
+
+            </p>
+
+
+            <div class="hero-buttons">
+
+                <a href="{% url 'login' %}" class="primary-btn">
+    Access Your Account →
+</a>
+
+                <a href="#services" class="secondary-btn">
+                    Explore Services
+                </a>
+
+            </div>
+
+
+            <div class="security">
+
+
+                <div class="security-item">
+
+                    <strong>
+                        🔒
+                    </strong>
+
+                    <div>
+
+                        <b>
+                            Secure
+                        </b>
+
+                        <small>
+                            Your data is protected
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="security-item">
+
+                    <strong>
+                        ⚡
+                    </strong>
+
+                    <div>
+
+                        <b>
+                            Fast
+                        </b>
+
+                        <small>
+                            Quick transactions
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="security-item">
+
+                    <strong>
+                        ✓
+                    </strong>
+
+                    <div>
+
+                        <b>
+                            Reliable
+                        </b>
+
+                        <small>
+                            Available anytime
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= ATM MACHINE ================= -->
+
+        <div class="atm-card">
+
+            <div class="card-glow"></div>
+
+
+            <div class="atm-machine">
+
+
+                <div class="machine-top">
+
+                    <div class="machine-logo">
+
+                        ATM<span>
+                            System
+                        </span>
+
+                    </div>
+
+
+                    <div class="status">
+
+                        <span></span>
+
+                        ONLINE
+
+                    </div>
+
+                </div>
+
+
+                <div class="screen">
+
+                    <div class="screen-logo">
+
+                        ATM SYSTEM
+
+                    </div>
+
+
+                    <h3>
+                        Welcome
+                    </h3>
+
+
+                    <p>
+
+                        Please insert your card
+                        or login to continue.
+
+                    </p>
+
+
+                    <div class="screen-line"></div>
+
+
+                    <div class="screen-buttons">
+
+                        <span>
+                            LOGIN
+                        </span>
+
+                        <span>
+                            HELP
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="card-slot">
+
+                    <div class="slot-light"></div>
+
+                    INSERT CARD
+
+                </div>
+
+
+
+                <div class="keypad">
+
+                    <span>1</span>
+                    <span>2</span>
+                    <span>3</span>
+
+                    <span>4</span>
+                    <span>5</span>
+                    <span>6</span>
+
+                    <span>7</span>
+                    <span>8</span>
+                    <span>9</span>
+
+                    <span class="cancel">
+                        C
+                    </span>
+
+                    <span>
+                        0
+                    </span>
+
+                    <span class="enter">
+                        ✓
+                    </span>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+
+    <!-- ================= SERVICES ================= -->
+
+    <section id="services" class="services">
+
+
+        <div class="section-title">
+
+            <span>
+                WHAT WE OFFER
+            </span>
+
+
+            <h2>
+                Banking Made Simple
+            </h2>
+
+
+            <p>
+
+                Everything you need to manage
+                your account in one simple system.
+
+            </p>
+
+        </div>
+
+
+
+        <div class="service-grid">
+
+
+            <div class="service-card">
+
+                <div class="service-icon">
+                    💰
+                </div>
+
+                <h3>
+                    Check Balance
+                </h3>
+
+                <p>
+
+                    View your current account
+                    balance quickly and securely.
+
+                </p>
+
+            </div>
+
+
+
+            <div class="service-card">
+
+                <div class="service-icon">
+                    ↓
+                </div>
+
+                <h3>
+                    Deposit
+                </h3>
+
+                <p>
+
+                    Add money to your account
+                    with a simple transaction.
+
+                </p>
+
+            </div>
+
+
+
+            <div class="service-card">
+
+                <div class="service-icon">
+                    ↑
+                </div>
+
+                <h3>
+                    Withdraw
+                </h3>
+
+                <p>
+
+                    Withdraw your money safely
+                    whenever you need it.
+
+                </p>
+
+            </div>
+
+
+
+            <div class="service-card">
+
+                <div class="service-icon">
+                    ↔
+                </div>
+
+                <h3>
+                    Transfer
+                </h3>
+
+                <p>
+
+                    Transfer money easily between
+                    supported accounts.
+
+                </p>
+
+            </div>
+
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        <div class="logo">
+
+            ATM<span>
+                System
+            </span>
+
+        </div>
+
+
+        <p>
+            Simple • Secure • Reliable
+        </p>
+
+
+        <small>
+            © 2026 ATM System. All rights reserved.
+        </small>
+
+    </footer>
+
+
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Withdraw - ATM System
+    </title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            margin: 0;
+
+            min-height: 100vh;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 20px;
+
+            font-family: Arial, sans-serif;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #001b36,
+                    #003b73,
+                    #0074d9,
+                    #00a8ff
+                );
+
+        }
+
+
+        .card {
+
+            width: 100%;
+
+            max-width: 470px;
+
+            background: white;
+
+            padding: 35px;
+
+            border-radius: 22px;
+
+            box-shadow:
+                0 20px 50px
+                rgba(0,0,0,0.30);
+
+        }
+
+
+        h1 {
+
+            color: #003b73;
+
+            text-align: center;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        .subtitle {
+
+            text-align: center;
+
+            color: #777;
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .balance {
+
+            color: white;
+
+            text-align: center;
+
+            padding: 20px;
+
+            border-radius: 15px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #003b73,
+                    #0074d9
+                );
+
+            margin-bottom: 25px;
+
+        }
+
+
+        .balance strong {
+
+            display: block;
+
+            font-size: 27px;
+
+            margin-top: 6px;
+
+        }
+
+
+        .error {
+
+            background: #ffecec;
+
+            color: #c62828;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        .success {
+
+            background: #eafff0;
+
+            color: #16833a;
+
+            padding: 12px;
+
+            border-radius: 8px;
+
+            margin-bottom: 15px;
+
+        }
+
+
+        label {
+
+            display: block;
+
+            font-weight: bold;
+
+            margin-bottom: 8px;
+
+        }
+
+
+        input {
+
+            width: 100%;
+
+            height: 53px;
+
+            padding: 0 15px;
+
+            border: 2px solid #dce8f5;
+
+            border-radius: 10px;
+
+            font-size: 17px;
+
+            outline: none;
+
+        }
+
+
+        input:focus {
+
+            border-color: #0074d9;
+
+        }
+
+
+        button {
+
+            width: 100%;
+
+            height: 53px;
+
+            margin-top: 20px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            color: white;
+
+            font-size: 17px;
+
+            font-weight: bold;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #005bea,
+                    #00a8ff
+                );
+
+            cursor: pointer;
+
+        }
+
+
+        .back {
+
+            display: block;
+
+            text-align: center;
+
+            margin-top: 15px;
+
+            padding: 13px;
+
+            border-radius: 10px;
+
+            text-decoration: none;
+
+            color: #0066cc;
+
+            background: #eef7ff;
+
+            font-weight: bold;
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="card">
+
+
+    <h1>
+        Withdraw Money
+    </h1>
+
+
+    <p class="subtitle">
+        Secure Cash Withdrawal
+    </p>
+
+
+    <div class="balance">
+
+        Current Balance
+
+        <strong>
+            TSh {{ account.balance|floatformat:2 }}
+        </strong>
+
+    </div>
+
+
+    {% if error %}
+
+        <div class="error">
+            {{ error }}
+        </div>
+
+    {% endif %}
+
+
+    {% if success %}
+
+        <div class="success">
+            {{ success }}
+        </div>
+
+    {% endif %}
+
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+
+        <label for="amount">
+            Enter Amount
+        </label>
+
+
+        <input
+            type="number"
+            id="amount"
+            name="amount"
+            placeholder="Enter amount"
+            min="1"
+            step="0.01"
+            required
+        >
+
+
+        <button type="submit">
+            Withdraw Money
+        </button>
+
+
+    </form>
+
+
+    <a
+        href="{% url 'dashboard' %}"
+        class="back"
+    >
+        ← Back to Dashboard
+    </a>
+
+
+</div>
+
+
+</body>
+
+</html>
