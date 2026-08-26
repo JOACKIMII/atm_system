@@ -1,0 +1,264 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ATM Login</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, Helvetica, sans-serif;
+            background:
+                radial-gradient(circle at top left, #164e8a 0%, transparent 35%),
+                radial-gradient(circle at bottom right, #061b36 0%, transparent 40%),
+                linear-gradient(135deg, #020817, #08264a);
+            color: white;
+            padding: 20px;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 430px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 22px;
+        }
+
+        .logo-icon {
+            width: 78px;
+            height: 78px;
+            margin: auto;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 38px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+        }
+
+        .logo h1 {
+            margin-top: 14px;
+            font-size: 28px;
+            letter-spacing: 1px;
+        }
+
+        .logo p {
+            margin-top: 6px;
+            color: #a9c7e8;
+            font-size: 14px;
+        }
+
+        .card {
+            background: rgba(255,255,255,0.09);
+            border: 1px solid rgba(255,255,255,0.16);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.45);
+        }
+
+        .card h2 {
+            text-align: center;
+            font-size: 23px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #a9c7e8;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+        .messages {
+            margin-bottom: 18px;
+        }
+
+        .message {
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: rgba(220, 38, 38, 0.18);
+            border: 1px solid rgba(248,113,113,0.3);
+            color: #fecaca;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .field {
+            margin-bottom: 19px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #dbeafe;
+        }
+
+        input {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.18);
+            outline: none;
+            background: rgba(0,0,0,0.22);
+            color: white;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+
+        input::placeholder {
+            color: #7891ae;
+        }
+
+        input:focus {
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 3px rgba(96,165,250,0.12);
+        }
+
+        button {
+            width: 100%;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #1473e6, #0b4fa8);
+            box-shadow: 0 10px 25px rgba(20,115,230,0.28);
+            transition: 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 30px rgba(20,115,230,0.4);
+        }
+
+        .security {
+            text-align: center;
+            margin-top: 22px;
+            color: #8eabc9;
+            font-size: 12px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 18px;
+            color: #7891ae;
+            font-size: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 24px 20px;
+            }
+
+            .logo h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="login-container">
+
+    <div class="logo">
+        <div class="logo-icon">🏦</div>
+
+        <h1>ATM SYSTEM</h1>
+
+        <p>Secure Banking Portal</p>
+    </div>
+
+    <div class="card">
+
+        <h2>Account Login</h2>
+
+        <p class="subtitle">
+            Enter your account number and PIN
+        </p>
+
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="message">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="field">
+                <label for="account_number">
+                    Account Number
+                </label>
+
+                <input
+                    type="text"
+                    id="account_number"
+                    name="account_number"
+                    placeholder="Enter account number"
+                    autocomplete="username"
+                    required
+                >
+            </div>
+
+            <div class="field">
+                <label for="pin">
+                    PIN
+                </label>
+
+                <input
+                    type="password"
+                    id="pin"
+                    name="pin"
+                    placeholder="Enter your PIN"
+                    inputmode="numeric"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <button type="submit">
+                LOGIN TO ACCOUNT
+            </button>
+        </form>
+
+        <div class="security">
+            🔒 Your banking session is protected
+        </div>
+
+    </div>
+
+    <div class="footer">
+        ATM System © 2026
+    </div>
+
+</div>
+
+</body>
+</html>
