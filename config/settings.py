@@ -1,42 +1,41 @@
 from pathlib import Path
 import os
 
-import dj_database_url
 
-
-# =========================================================
+# ============================================================
 # BASE DIRECTORY
-# =========================================================
+# ============================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# =========================================================
+# ============================================================
 # SECURITY
-# =========================================================
+# ============================================================
 
 SECRET_KEY = os.environ.get(
-    "SECRET_KEY",
-    "django-insecure-atm-system-development-key"
+    "DJANGO_SECRET_KEY",
+    "django-insecure-atm-system-development-key-change-in-production"
 )
 
-DEBUG = os.environ.get(
-    "DEBUG",
-    "False"
-).lower() == "true"
-
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = [
-    "localhost",
     "127.0.0.1",
-    ".onrender.com",
-    "atm.joackim.com",
+    "localhost",
+    "atm-system-2367.onrender.com",
 ]
 
+# Allow Render's dynamic hostname if needed
+render_hostname = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
 
-# =========================================================
+if render_hostname:
+    ALLOWED_HOSTS.append(render_hostname)
+
+
+# ============================================================
 # APPLICATIONS
-# =========================================================
+# ============================================================
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -50,13 +49,14 @@ INSTALLED_APPS = [
 ]
 
 
-# =========================================================
+# ============================================================
 # MIDDLEWARE
-# =========================================================
+# ============================================================
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
 
+    # WhiteNoise serves static files on Render
     "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -73,22 +73,24 @@ MIDDLEWARE = [
 ]
 
 
-# =========================================================
+# ============================================================
 # URL CONFIGURATION
-# =========================================================
+# ============================================================
 
 ROOT_URLCONF = "config.urls"
 
 
-# =========================================================
+# ============================================================
 # TEMPLATES
-# =========================================================
+# ============================================================
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
 
-       'DIRS': [BASE_DIR / 'templates'],
+        "DIRS": [
+            BASE_DIR / "templates",
+        ],
 
         "APP_DIRS": True,
 
@@ -105,51 +107,52 @@ TEMPLATES = [
 ]
 
 
-# =========================================================
+# ============================================================
 # WSGI
-# =========================================================
+# ============================================================
 
 WSGI_APPLICATION = "config.wsgi.application"
 
 
-# =========================================================
+# ============================================================
 # DATABASE
-# =========================================================
-#
-# Render:
-# DATABASE_URL environment variable
-#
-# Local PC:
-# SQLite database
-#
+# ============================================================
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 
 
 if DATABASE_URL:
+    try:
+        import dj_database_url
 
-    DATABASES = {
-        "default": dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=600,
-            ssl_require=True,
-        )
-    }
+        DATABASES = {
+            "default": dj_database_url.parse(
+                DATABASE_URL,
+                conn_max_age=600,
+                ssl_require=True,
+            )
+        }
+
+    except ImportError:
+        DATABASES = {
+            "default": {
+                "ENGINE": "django.db.backends.sqlite3",
+                "NAME": BASE_DIR / "db.sqlite3",
+            }
+        }
 
 else:
-
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
 
 
-# =========================================================
+# ============================================================
 # PASSWORD VALIDATION
-# =========================================================
+# ============================================================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -182,60 +185,81 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# =========================================================
-# LANGUAGE / TIME ZONE
-# =========================================================
+# ============================================================
+# LANGUAGE / TIMEZONE
+# ============================================================
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "Africa/Nairobi"
+TIME_ZONE = "Africa/Dar_es_Salaam"
 
 USE_I18N = True
 
 USE_TZ = True
 
 
-# =========================================================
+# ============================================================
 # STATIC FILES
-# =========================================================
+# ============================================================
 
 STATIC_URL = "/static/"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STATICFILES_DIRS = [
-    BASE_DIR / "atm" / "static",
+    BASE_DIR / "static",
 ]
 
 
-# =========================================================
+# ============================================================
 # WHITENOISE
-# =========================================================
+# ============================================================
 
-STATICFILES_STORAGE = (
-    "whitenoise.storage.CompressedManifestStaticFilesStorage"
-)
+STORAGES = {
+    "default": {
+        "BACKEND": (
+            "django.core.files.storage.FileSystemStorage"
+        ),
+    },
+
+    "staticfiles": {
+        "BACKEND": (
+            "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        ),
+    },
+}
 
 
-# =========================================================
+# ============================================================
 # DEFAULT PRIMARY KEY
-# =========================================================
+# ============================================================
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
-# =========================================================
-# SESSION
-# =========================================================
+# ============================================================
+# LOGIN / LOGOUT
+# ============================================================
 
-SESSION_COOKIE_AGE = 86400
+LOGIN_URL = "/admin/login/"
 
-SESSION_SAVE_EVERY_REQUEST = True
+LOGIN_REDIRECT_URL = "/admin-dashboard/"
+
+LOGOUT_REDIRECT_URL = "/admin/login/"
 
 
-# =========================================================
-# SECURITY FOR PRODUCTION
-# =========================================================
+# ============================================================
+# CSRF - RENDER
+# ============================================================
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://atm-system-2367.onrender.com",
+]
+
+
+# ============================================================
+# SECURITY SETTINGS FOR PRODUCTION
+# ============================================================
 
 if not DEBUG:
 
@@ -248,18 +272,8 @@ if not DEBUG:
 
     CSRF_COOKIE_SECURE = True
 
-    CSRF_TRUSTED_ORIGINS = [
-        "https://*.onrender.com",
-        "https://atm.joackim.com",
-    ]
+    SECURE_BROWSER_XSS_FILTER = True
 
+    SECURE_CONTENT_TYPE_NOSNIFF = True
 
-
-
-
-
-
-
-    LOGIN_URL = "/admin/login/"
-LOGIN_REDIRECT_URL = "/admin-dashboard/"
-LOGOUT_REDIRECT_URL = "/admin/login/"
+    X_FRAME_OPTIONS = "DENY"
